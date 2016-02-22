@@ -30,7 +30,7 @@
 # with in order to force the user to review this USER CONFIGURATION section
 # and set the various options. Uncomment and set to desired path.
 # Mashpodder will not create this directory for you.
-#BASEDIR="$HOME/mashpodder"
+BASEDIR="$HOME/mashpodder"
 
 # RSSFILE: Location of mp.conf file.  Can be changed to another file name.
 # Default is "$BASEDIR/mp.conf".
@@ -42,7 +42,7 @@ RSSFILE="$BASEDIR/mp.conf"
 # reporting the issues that led to these directory changes.  Mashpodder will
 # create this directory if it does not exist unless $CREATE_PODCASTDIR is
 # set to "".
-PODCASTDIR="$BASEDIR/podcasts"
+PODCASTDIR="/media/Downloads/Podcasts"
 
 # CREATE_PODCASTDIR: Default "1" will create the directory for you if it
 # does not exist; "" means to fail and exit if $PODCASTDIR does not exist.
@@ -50,7 +50,7 @@ PODCASTDIR="$BASEDIR/podcasts"
 # setting this to "" and thus fail is a means of detecting an unmounted
 # share, and to avoid unintentionally writing to the mount point.  (This
 # assumes that $PODCASTDIR is below, and not, the mount point.)
-CREATE_PODCASTDIR="1"
+CREATE_PODCASTDIR=""
 
 # DATEFILEDIR: Location of the "date" directory below $PODCASTDIR
 # Note: do not use a leading slash, it will get added later.  The
@@ -86,7 +86,7 @@ PODLOG="$BASEDIR/podcast.log"
 # The filename will be $PODLOG.$DATESTRING (see above variables).  If you
 # enable this, you'll want to monitor the number of backups and manually
 # remove old copies.  Default is "".
-PODLOG_BACKUP=""
+PODLOG_BACKUP="1"
 
 # FIRST_ONLY: Default "" means look to mp.conf for whether to download or
 # update; "1" will override mp.conf and download the newest episode.
@@ -111,11 +111,11 @@ DAILY_PLAYLIST=""
 UPDATE=""
 
 # VERBOSE: Default "" is quiet output; "1" is verbose.
-VERBOSE=""
+VERBOSE="1"
 
 # WGET_QUIET: Default is "-q" for quiet wget output; change to "" for wget
 # output.
-WGET_QUIET="-q"
+WGET_QUIET=""
 
 # WGET_TIMEOUT: Default is 30 seconds; can decrease or increase if some
 # files are cut short. Thanks to Phil Smith for the bug report.
@@ -124,9 +124,9 @@ WGET_TIMEOUT="30"
 # Location of binaries.  Below are the paths to third-party binaries used by
 # mashpodder.  This is here for BSD users where these binaries are usually in
 # /usr/local/bin.  Defaults are Linux locations (i.e. /usr/bin).
-WGET=${WGET:-"/usr/bin/wget"}
-CURL=${CURL:-"/usr/bin/curl"}
-XSLTPROC=${XSLTPROC:-"/usr/bin/xsltproc"}
+WGET=${WGET:-"/usr/local/bin/wget"}
+CURL=${CURL:-"/usr/local/bin/curl"}
+XSLTPROC=${XSLTPROC:-"/usr/local/bin/xsltproc"}
 
 ### END USER CONFIGURATION
 
