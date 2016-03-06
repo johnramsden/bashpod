@@ -53,6 +53,12 @@ PODCASTDIR="/media/Downloads/Complete/Podcasts"
 # assumes that $PODCASTDIR is below, and not, the mount point.)
 CREATE_PODCASTDIR="1"
 
+# Set to set permissions on downloads
+POD_SET_PERM="1"
+
+#  Permissions on download
+PODCAST_PERM="775"
+
 # DATEFILEDIR: Location of the "date" directory below $PODCASTDIR
 # Note: do not use a leading slash, it will get added later.  The
 # eventual location will be $PODCASTDIR/$DATEFILEDIR/$(date +$DATESTRING)
@@ -412,7 +418,7 @@ fix_url () {
 
   # Serial serial-s02-e09.mp3
   if echo $FIXURL | grep -q "serial-[0-9]*.*mp3$"; then
-      FILENAME="Serial $(echo ${FIRSTFILENAME} | sed -e 's/serial-\(s[0-9]*\)-\(e[0-9]*\)\(.mp3$\)/S\1E\2\3/' )";
+      FILENAME="Serial $(echo ${FIRSTFILENAME} | sed -e 's/serial-\(s[0-9]*\)-\(e[0-9]*\)\(.mp3$\)/\1\2\3/' )";
       return
   fi
 
@@ -518,6 +524,12 @@ fetch_podcasts () {
                         "$DLURL"
                     ((NEWDL=NEWDL+1))
                     mv "$FILENAME" $PODCASTDIR/$DATADIR/"$FILENAME"
+                    if [ "$POD_SET_PERM" = "1" ]; then
+                        if verbose; then
+                            echo "Setting permissions to $PODCAST_PERM on download"
+                        fi
+                        chmod -R $PODCAST_PERM $PODCASTDIR/$DATADIR
+                    fi
                     cd $BASEDIR
                     if [[ -n "$M3U" && -n "$DAILY_PLAYLIST" ]]; then
                         if verbose; then
