@@ -1,10 +1,12 @@
 #!/usr/local/bin/bash
 
 #
-# Mashpodder by Chess Griffin <chess.griffin@gmail.com>
+# Bashpod by John Ramsden <johnramsden@tutanota.com>
 # Copyright 2009-2014
 #
 # Originally based on BashPodder by Linc Fessenden 12/1/2004
+# and
+# mashpodder by Chess Griffin  2009-2014
 #
 # Redistributions of this script must retain the above copyright notice,
 # this list of conditions and the following disclaimer.
@@ -53,6 +55,12 @@ PODCASTDIR="/media/Downloads/Complete/Podcasts"
 # assumes that $PODCASTDIR is below, and not, the mount point.)
 CREATE_PODCASTDIR="1"
 
+# Set to set permissions on downloads
+POD_SET_PERM="1"
+
+#  Permissions on download
+PODCAST_PERM="775"
+
 # DATEFILEDIR: Location of the "date" directory below $PODCASTDIR
 # Note: do not use a leading slash, it will get added later.  The
 # eventual location will be $PODCASTDIR/$DATEFILEDIR/$(date +$DATESTRING)
@@ -91,7 +99,7 @@ PODLOG_BACKUP="1"
 
 # FIRST_ONLY: Default "" means look to mp.conf for whether to download or
 # update; "1" will override mp.conf and download the newest episode.
-FIRST_ONLY=""
+FIRST_ONLY="1"
 
 # M3U: Default "" means no m3u playlist created; "1" will create m3u
 # playlists in each podcast's directory listing all the files in that
@@ -328,6 +336,7 @@ fix_url () {
     fi
     if echo $FIXURL | grep -q "msnbc.*zeit.*m4v$"; then
         FILENAME=$(echo $FIRSTFILENAME | sed -e 's/.*\(a_zeit.*m4v$\)/\1/')
+        return
     fi
 
     # Fix MSNBC podcast names for video feeds
@@ -338,7 +347,95 @@ fix_url () {
 
     # Remove question marks at end
     FILENAME=$(echo $FILENAME | sed -e 's/?.*$//')
-    
+
+    ### Start of custom naming ###
+
+  # Coder Radio
+  # cr-0194-432p.mp4
+  if echo $FIXURL | grep -q "cr-[0-9]*-[0-9]*p.mp4$"; then
+    FILENAME="Coder Radio S01E$(echo ${FIRSTFILENAME} | sed -e 's/cr-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+    return
+  fi
+
+  # Linux Action Show
+  # linuxactionshowep406.mp4
+  if echo $FIXURL | grep -q "linuxactionshowep[0-9]*.mp4$"; then
+    FILENAME="The Linux Action Show! E$(echo ${FIRSTFILENAME} | sed -e 's/linuxactionshowep\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    return
+  fi
+
+  # Linux Unplugged
+  # lup-0133-432p.mp4
+  if echo $FIXURL | grep -q "lup-[0-9]*-[0-9]*p.mp4$"; then
+    FILENAME="Linux Unplugged S01E$(echo ${FIRSTFILENAME} | sed -e 's/lup-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+    return
+  fi
+
+  # BSD Now
+  # bsd-0130.mp4
+  if echo $FIXURL | grep -q "bsd-[0-9]*.mp4$"; then
+    FILENAME="BSD Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/bsd-\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    return
+  fi
+
+  # Tech Talk Today
+  # T3-0233-432p.mp4
+  if echo $FIXURL | grep -q "T3-[0-9]*-[0-9]*p.mp4$"; then
+      FILENAME="Tech Talk Today S01E$(echo ${FIRSTFILENAME} | sed -e 's/T3-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+      return
+  fi
+
+  # TechSNAP
+  # TechSNAP-0055.mp4
+  if echo $FIXURL | grep -q "techsnap-[0-9]*.mp4$"; then
+    FILENAME="TechSNAP S01E$(echo ${FIRSTFILENAME} | sed -e 's/techsnap-\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    return
+  fi
+
+  # FLOSS
+  # floss0377_h264m_1280x720_1872.mp4
+  if echo $FIXURL | grep -q "floss[0-9]*_.*mp4$"; then
+      FILENAME="FLOSS S01E$(echo ${FIRSTFILENAME} | sed -e 's/floss\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      return
+  fi
+
+  # Know How
+  # kh0190_h264m_1280x720_1872.mp4
+  if echo $FIXURL | grep -q "kh[0-9]*_.*mp4$"; then
+      FILENAME="Know How S01E$(echo ${FIRSTFILENAME} | sed -e 's/kh\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      return
+  fi
+
+  # SecurityNow sn0549_h264m_1280x720_1872.mp4
+  if echo $FIXURL | grep -q "sn[0-9]*_.*mp4$"; then
+      FILENAME="Security Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/sn\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      return
+  fi
+
+  # TWIT twit0551_h264m_1280x720_1872.mp4
+  if echo $FIXURL | grep -q "twit[0-9]*.*mp4$"; then
+      FILENAME="This Week in Tech S01E$(echo ${FIRSTFILENAME} | sed -e 's/twit\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      return
+  fi
+
+  # Serial serial-s02-e09.mp3
+  if echo $FIXURL | grep -q "serial-[0-9]*.*mp3$"; then
+      FILENAME="Serial $(echo ${FIRSTFILENAME} | sed -e 's/serial-\(s[0-9]*\)-\(e[0-9]*\)\(.mp3$\)/\1\2\3/' )";
+      return
+  fi
+
+  # GeekRant 2016-02-24_geekrant_228__a_fairly_fluffy_show.mp3
+
+  # TLLTS tllts_648-03-02-16.mp3
+
+  # HanselMinutes hanselminutes_0517.mp3
+
+  # ProgrammingThrowdown ProgrammingThrowdown_50.mp3
+
+  # LinuxLuddites LinuxLuddites072.mp3
+
+  # HerdingCode HerdingCode-0215-Jon-McCoy.mp3
+
 }
 
 check_directory () {
@@ -429,6 +526,12 @@ fetch_podcasts () {
                         "$DLURL"
                     ((NEWDL=NEWDL+1))
                     mv "$FILENAME" $PODCASTDIR/$DATADIR/"$FILENAME"
+                    if [ "$POD_SET_PERM" = "1" ]; then
+                        if verbose; then
+                            echo "Setting permissions to $PODCAST_PERM on download"
+                        fi
+                        chmod -R $PODCAST_PERM $PODCASTDIR/$DATADIR
+                    fi
                     cd $BASEDIR
                     if [[ -n "$M3U" && -n "$DAILY_PLAYLIST" ]]; then
                         if verbose; then

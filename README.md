@@ -1,14 +1,10 @@
-# mashpodder
-## podcatching client based on BashPodder
+# BASHPOD
 
-Mashpodder allows the user to download podcast episodes. The user can choose
-to save these episodes in a named directory (i.e. separate directory per feed)
-or in a date-based directory, so the most recent episodes are in one folder.
-Or, the user can combine this by having some podcasts in a named directory and
-others in the date-based directory. The user can choose to download all, none,
-or a set number of episodes per feed. The user can also choose to mark the
-episodes as downloaded (without actually downloading them) which can be used
-to 'catch up' to a podcast.
+A simple podcatching client based on BashPodder
+
+Bashpodder is a simple podcasting client written completely in bash. in 2005 [chessgriffin](https://github.com/chessgriffin/mashpodder) took over maintenance of bshpodder and renamed it to mashpodder. In 2015 he stopped maintaining his version mashpotter, when I downloaded it and made a few simple customisations to my to make it able to do a few things I required, I forked project and renamed it Bashpod.
+
+Bashpod allows the user to download podcast episodes. The user can choose to save these episodes in a named directory (i.e. separate directory per feed) or in a date-based directory, so the most recent episodes are in one folder. Or, the user can combine this by having some podcasts in a named directory and others in the date-based directory. The user can choose to download all, none, or a set number of episodes per feed. The user can also choose to mark the episodes as downloaded (without actually downloading them) which can be used to 'catch up' to a podcast.
 
 ## Dependencies
 * bash
@@ -18,20 +14,17 @@ to 'catch up' to a podcast.
 
 ## Configuration
 
-### mp.conf
+### pod.conf
 
 Add podcast feeds here, each line represents a new podcast. Anything that doesn't exist in podcast.log will be downloaded.
 
 #### Configuration options
 
-* update
-Write complete history of feed to podcast.log but dont't download anything.
+* ```update```: Write complete history of feed to podcast.log but dont't download anything.
 
-* all
-Download everything from feed
+* ```all```: Download everything from feed
 
-* number
-Download a number of recent episodes
+* ```number```: Download a number of recent episodes
 
 Example, Download all of "The Linux Action Show!" and "Linux Unplugged":
 
@@ -40,24 +33,23 @@ http://feeds.feedburner.com/linuxashd TheLinuxActionShow all
 http://feeds.feedburner.com/linuxunvid LinuxUnplugged all
 ```
 
-### mashpodder.sh
+### bashpod.sh
 
 * ```BASEDIR```: Base location of the script and related files.
 
 * ```RSSFILE```: Location of mp.conf file.
 
-* ```PODCASTDIR```: Location of podcast directories listed in $RSSFILE.
+* ```PODCASTDIR```: Location of podcast directories listed in ```$RSSFILE.```
 
-* ```CREATE_PODCASTDIR```: Default "1" will create the directory for you if it does not exist; "" means to fail and exit if $PODCASTDIR does not exist.
+* ```CREATE_PODCASTDIR```: Default "1" will create the directory for you if it does not exist; "" means to fail and exit if ```$PODCASTDIR``` does not exist.
 
-* ```POD_SET_PERM```: Set permissions on downloads, "1" sets permissions to $PODCAST_PERM, "" sets to default permissions.
+* ```POD_SET_PERM```: Set permissions on downloads, "1" sets permissions to ```$PODCAST_PERM```, "" sets to default permissions.
 
 * ```PODCAST_PERM```: Permissions on download, should be a valid chmod value
 
-* ```DATEFILEDIR```: Location of the "date" directory below $PODCASTDIR
+* ```DATEFILEDIR```: Location of the "date" directory below ```$PODCASTDIR```
 
 * ```TMPDIR```: Location of temp logs, where files are temporarily downloaded to,
-# and other bits.  
 
 * ```DATESTRING```: Valid date format for date-based archiving.  
 
@@ -65,7 +57,7 @@ http://feeds.feedburner.com/linuxunvid LinuxUnplugged all
 
 * ```PODLOG```: This is a critical file.  This is the file that saves the name of every file downloaded (or checked with the 'update' option in mp.conf.)
 
-* ```PODLOG_BACKUP```: Setting this option to "1" will create a date-stamped backup of your podcast.log file before new podcast files are downloaded. The filename will be $PODLOG.$DATESTRING (see above variables).  If you enable this, you'll want to monitor the number of backups and manually remove old copies.  
+* ```PODLOG_BACKUP```: Setting this option to "1" will create a date-stamped backup of your podcast.log file before new podcast files are downloaded. The filename will be ```$PODLOG.$DATESTRING``` (see above variables).  If you enable this, you'll want to monitor the number of backups and manually remove old copies.  
 
 * ```FIRST_ONLY```: Default "" means look to mp.conf for whether to download or update; "1" will override mp.conf and download the newest episode.
 
@@ -94,4 +86,3 @@ To change Linux Action Show from it's original "linuxactionshowep406.mp4" to "Th
     return
   fi
 ```
-To change 
