@@ -33,11 +33,11 @@
 # with in order to force the user to review this USER CONFIGURATION section
 # and set the various options. Uncomment and set to desired path.
 # Mashpodder will not create this directory for you.
-BASEDIR="/home/pod/mashpodder"
+BASEDIR="/home/pod/bashpod"
 
-# RSSFILE: Location of mp.conf file.  Can be changed to another file name.
-# Default is "$BASEDIR/mp.conf".
-RSSFILE="$BASEDIR/mp.conf"
+# RSSFILE: Location of pod.conf file.  Can be changed to another file name.
+# Default is "$BASEDIR/pod.conf".
+RSSFILE="$BASEDIR/pod.conf"
 
 # PODCASTDIR: Location of podcast directories listed in $RSSFILE.  If you
 # have an escaped space in the directory name be sure to keep the double
@@ -95,11 +95,11 @@ PODLOG="$BASEDIR/podcast.log"
 # The filename will be $PODLOG.$DATESTRING (see above variables).  If you
 # enable this, you'll want to monitor the number of backups and manually
 # remove old copies.  Default is "".
-PODLOG_BACKUP="1"
+PODLOG_BACKUP=""
 
 # FIRST_ONLY: Default "" means look to mp.conf for whether to download or
 # update; "1" will override mp.conf and download the newest episode.
-FIRST_ONLY="1"
+FIRST_ONLY=""
 
 # M3U: Default "" means no m3u playlist created; "1" will create m3u
 # playlists in each podcast's directory listing all the files in that
@@ -360,7 +360,7 @@ fix_url () {
   # Linux Action Show
   # linuxactionshowep406.mp4
   if echo $FIXURL | grep -q "linuxactionshowep[0-9]*.mp4$"; then
-    FILENAME="The Linux Action Show! E$(echo ${FIRSTFILENAME} | sed -e 's/linuxactionshowep\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    FILENAME="The Linux Action Show! S2016E$(echo ${FIRSTFILENAME} | sed -e 's/linuxactionshowep\([0-9]*\)\(.mp4$\)/\1\2/' )"
     return
   fi
 
@@ -392,10 +392,10 @@ fix_url () {
     return
   fi
 
-  # FLOSS
+  # FLOSS Weekly
   # floss0377_h264m_1280x720_1872.mp4
   if echo $FIXURL | grep -q "floss[0-9]*_.*mp4$"; then
-      FILENAME="FLOSS S01E$(echo ${FIRSTFILENAME} | sed -e 's/floss\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      FILENAME="FLOSS Weekly S01E$(echo ${FIRSTFILENAME} | sed -e 's/floss\([0-9]*\).*\(.mp4$\)/\1\2/' )";
       return
   fi
 
