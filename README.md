@@ -37,7 +37,7 @@ http://feeds.feedburner.com/linuxunvid LinuxUnplugged all
 
 * ```BASEDIR```: Base location of the script and related files.
 
-* ```RSSFILE```: Location of mp.conf file.
+* ```RSSFILE```: Location of pod.conf file.
 
 * ```PODCASTDIR```: Location of podcast directories listed in ```$RSSFILE.```
 
@@ -59,13 +59,13 @@ http://feeds.feedburner.com/linuxunvid LinuxUnplugged all
 
 * ```PODLOG_BACKUP```: Setting this option to "1" will create a date-stamped backup of your podcast.log file before new podcast files are downloaded. The filename will be ```$PODLOG.$DATESTRING``` (see above variables).  If you enable this, you'll want to monitor the number of backups and manually remove old copies.  
 
-* ```FIRST_ONLY```: Default "" means look to mp.conf for whether to download or update; "1" will override mp.conf and download the newest episode.
+* ```FIRST_ONLY```: Default "" means look to pod.conf for whether to download or update; "1" will override mp.conf and download the newest episode.
 
 * ```M3U```: Default "" means no m3u playlist created; "1" will create m3u playlists in each podcast's directory listing all the files in that directory.
 
 * ```DAILY_PLAYLIST```: Default "" means no daily m3u playlist created; "1" will create an m3u playlist in $PODCASTDIR listing all newly downloaded shows.  
 
-* ```UPDATE```: Default "" means look to mp.conf on whether to download or update; "1" will override mp.conf and cause all feeds to be updated (meaning episodes will be marked as downloaded but not actually downloaded).
+* ```UPDATE```: Default "" means look to pod.conf on whether to download or update; "1" will override mp.conf and cause all feeds to be updated (meaning episodes will be marked as downloaded but not actually downloaded).
 
 * ```VERBOSE```: Default "" is quiet output; "1" is verbose.
 
