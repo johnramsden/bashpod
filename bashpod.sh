@@ -29,7 +29,7 @@
 
 # BASEDIR: Base location of the script and related files.  If you have an
 # escaped space in the directory name be sure to keep the double quotes.
-# Default is "$HOME/mashpodder".  This is commented out on purpose to start
+# Default is "$HOME/bashpod".  This is commented out on purpose to start
 # with in order to force the user to review this USER CONFIGURATION section
 # and set the various options. Uncomment and set to desired path.
 # Mashpodder will not create this directory for you.
@@ -42,7 +42,7 @@ RSSFILE="$BASEDIR/pod.conf"
 # PODCASTDIR: Location of podcast directories listed in $RSSFILE.  If you
 # have an escaped space in the directory name be sure to keep the double
 # quotes.  Default is "$BASEDIR/podcasts".  Thanks to startrek.steve for
-# reporting the issues that led to these directory changes.  Mashpodder will
+# reporting the issues that led to these directory changes.  Baspod will
 # create this directory if it does not exist unless $CREATE_PODCASTDIR is
 # set to "".
 PODCASTDIR="/media/Downloads/Complete/Podcasts"
@@ -64,9 +64,17 @@ PODCAST_PERM="775"
 # DATEFILEDIR: Location of the "date" directory below $PODCASTDIR
 # Note: do not use a leading slash, it will get added later.  The
 # eventual location will be $PODCASTDIR/$DATEFILEDIR/$(date +$DATESTRING)
-# Mashpodder will create this directory if it does not exist.
+# Bashpod will create this directory if it does not exist.
 # Default is "", which results in date directories being put in $PODCASTDIR.
 DATEFILEDIR=""
+
+# CREATE_PODCASTDIR: Default "1" will create the directory for you if it
+# does not exist; "" means to fail and exit if $PODCASTDIR does not exist.
+# If your podcast directory is on a mounted share (e.g. NFS, Samba), then
+# setting this to "" and thus fail is a means of detecting an unmounted
+# share, and to avoid unintentionally writing to the mount point.  (This
+# assumes that $PODCASTDIR is below, and not, the mount point.)
+CREATE_PODCASTDIR="1"
 
 # TMPDIR: Location of temp logs, where files are temporarily downloaded to,
 # and other bits.  If you have an escaped space in the directory name be
@@ -90,6 +98,7 @@ PARSE_ENCLOSURE="$BASEDIR/parse_enclosure.xsl"
 # the file is kept in a safe place.  Default is "$BASEDIR/podcast.log".
 PODLOG="$BASEDIR/podcast.log"
 
+
 # PODLOG_BACKUP: Setting this option to "1" will create a date-stamped
 # backup of your podcast.log file before new podcast files are downloaded.
 # The filename will be $PODLOG.$DATESTRING (see above variables).  If you
@@ -98,8 +107,8 @@ PODLOG="$BASEDIR/podcast.log"
 PODLOG_BACKUP=""
 
 # FIRST_ONLY: Default "" means look to mp.conf for whether to download or
-# update; "1" will override mp.conf and download the newest episode.
-FIRST_ONLY=""
+# update; "1" will override pod.conf and download the newest episode.
+FIRST_ONLY="1"
 
 # M3U: Default "" means no m3u playlist created; "1" will create m3u
 # playlists in each podcast's directory listing all the files in that
@@ -114,7 +123,7 @@ M3U=""
 DAILY_PLAYLIST=""
 
 # UPDATE: Default "" means look to mp.conf on whether to download or
-# update; "1" will override mp.conf and cause all feeds to be updated
+# update; "1" will override pod.conf and cause all feeds to be updated
 # (meaning episodes will be marked as downloaded but not actually
 # downloaded).
 UPDATE=""
@@ -349,53 +358,77 @@ fix_url () {
     FILENAME=$(echo $FILENAME | sed -e 's/?.*$//')
 
     ### Start of custom naming ###
+  if echo $FIXURL | grep -q "SE-Radio-Episode-[0-9]*.*.mp3$"; then
+    FILENAME="Software Engineering Radio S01E$(echo ${FIRSTFILENAME} | sed -e 's/SE-Radio-Episode-\([0-9]*\)-.*\(.mp3$\)/\1\2/' )"
+      return
+  fi
+
+  if echo $FIXURL | grep -q "asknoah-[0-9]*.mp4"; then 
+    FILENAME="Ask Noah S01E$(echo ${FIRSTFILENAME} | sed -e 's/asknoah-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
+    return
+  fi
+
 
   # Coder Radio
   # cr-0194-432p.mp4
-  if echo $FIXURL | grep -q "cr-[0-9]*-[0-9]*p.mp4$"; then
-    FILENAME="Coder Radio S01E$(echo ${FIRSTFILENAME} | sed -e 's/cr-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+  if echo $FIXURL | grep -q "cr-[0-9]*.*.mp4$"; then
+    FILENAME="Coder Radio S01E$(echo ${FIRSTFILENAME} | sed -e 's/cr-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
     return
   fi
 
   # Linux Action Show
   # linuxactionshowep406.mp4
   if echo $FIXURL | grep -q "linuxactionshowep[0-9]*.mp4$"; then
-    FILENAME="The Linux Action Show! S2016E$(echo ${FIRSTFILENAME} | sed -e 's/linuxactionshowep\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    FILENAME="The Linux Action Show! S2017E$(echo ${FIRSTFILENAME} | sed -e 's/linuxactionshowep\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
+    return
+  fi
+
+  # Linux Action News
+  # lan-002.mp4
+  if echo $FIXURL | grep -q "lan-[0-9]*.mp4$"; then
+    FILENAME="Linux Action News S01E$(echo ${FIRSTFILENAME} | sed -e 's/lan-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
     return
   fi
 
   # Linux Unplugged
-  # lup-0133-432p.mp4
-  if echo $FIXURL | grep -q "lup-[0-9]*-[0-9]*p.mp4$"; then
-    FILENAME="Linux Unplugged S01E$(echo ${FIRSTFILENAME} | sed -e 's/lup-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+  # lup-0133.mp4
+  if echo $FIXURL | grep -q "lup-[0-9]*.*.mp4$"; then
+    FILENAME="Linux Unplugged S01E$(echo ${FIRSTFILENAME} | sed -e 's/lup-\([0-9]*\)\(.mp4$\)/\1 HDTV.x264\2/' )"
     return
   fi
 
   # BSD Now
   # bsd-0130.mp4
   if echo $FIXURL | grep -q "bsd-[0-9]*.mp4$"; then
-    FILENAME="BSD Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/bsd-\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    FILENAME="BSD Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/bsd-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
     return
   fi
 
   # Tech Talk Today
   # T3-0233-432p.mp4
   if echo $FIXURL | grep -q "T3-[0-9]*-[0-9]*p.mp4$"; then
-      FILENAME="Tech Talk Today S01E$(echo ${FIRSTFILENAME} | sed -e 's/T3-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1\2/' )"
+      FILENAME="Tech Talk Today S01E$(echo ${FIRSTFILENAME} | sed -e 's/T3-\([0-9]*\)-[0-9]*p\(.mp4$\)/\1 HDTV.x264\2/' )"
       return
   fi
 
   # TechSNAP
   # TechSNAP-0055.mp4
   if echo $FIXURL | grep -q "techsnap-[0-9]*.mp4$"; then
-    FILENAME="TechSNAP S01E$(echo ${FIRSTFILENAME} | sed -e 's/techsnap-\([0-9]*\)\(.mp4$\)/\1\2/' )"
+    FILENAME="TechSNAP S01E$(echo ${FIRSTFILENAME} | sed -e 's/techsnap-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
+    return
+  fi
+
+  # UserError
+  # ue-003.mp4
+  if echo $FIXURL | grep -q "ue-[0-9]*.mp4$"; then
+    FILENAME="User Error S01E$(echo ${FIRSTFILENAME} | sed -e 's/ue-\([0-9]*\)\(.mp4$\)/\1 720p.HDTV.x264\2/' )"
     return
   fi
 
   # FLOSS Weekly
   # floss0377_h264m_1280x720_1872.mp4
   if echo $FIXURL | grep -q "floss[0-9]*_.*mp4$"; then
-      FILENAME="FLOSS Weekly S01E$(echo ${FIRSTFILENAME} | sed -e 's/floss\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      FILENAME="FLOSS Weekly S01E$(echo ${FIRSTFILENAME} | sed -e 's/floss\([0-9]*\).*\(.mp4$\)/\1 720p.HDTV.x264\2/' )";
       return
   fi
 
@@ -408,13 +441,22 @@ fix_url () {
 
   # SecurityNow sn0549_h264m_1280x720_1872.mp4
   if echo $FIXURL | grep -q "sn[0-9]*_.*mp4$"; then
-      FILENAME="Security Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/sn\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+      FILENAME="Security Now S01E$(echo ${FIRSTFILENAME} | sed -e 's/sn\([0-9]*\).*\(.mp4$\)/\1 720p.HDTV.x264\2/' )";
       return
   fi
 
   # TWIT twit0551_h264m_1280x720_1872.mp4
-  if echo $FIXURL | grep -q "twit[0-9]*.*mp4$"; then
-      FILENAME="This Week in Tech S01E$(echo ${FIRSTFILENAME} | sed -e 's/twit\([0-9]*\).*\(.mp4$\)/\1\2/' )";
+  if echo $FIXURL | grep -q "twit[0-9]*_.*mp4$"; then
+      EPISODE_NUM="$(echo ${FIRSTFILENAME} | sed -e 's/twit\([0-9]*\).*\(.mp4$\)/\1/' )"
+      AIRED_NUMBERING_VAR="594"
+      S2016_NUM=`expr ${EPISODE_NUM} - ${AIRED_NUMBERING_VAR}`
+      FILENAME="This Week in Tech S2017E${S2016_NUM}.mp4";
+      return
+  fi
+
+  # TNSS tnss0057_h264m_1280x720_1872.mp4
+  if echo $FIXURL | grep -q "tnss[0-9]*_.*mp4$"; then
+      FILENAME="The New Screen Savers S01E$(echo ${FIRSTFILENAME} | sed -e 's/tnss\([0-9]*\).*\(.mp4$\)/\1 720p.HDTV.x264\2/' )";
       return
   fi
 
@@ -423,19 +465,26 @@ fix_url () {
       FILENAME="Serial $(echo ${FIRSTFILENAME} | sed -e 's/serial-\(s[0-9]*\)-\(e[0-9]*\)\(.mp3$\)/\1\2\3/' )";
       return
   fi
+  
+  # Ubuntu Podcast ubuntupodcast_s09e44.mp3
+  if echo $FIXURL | grep -q "ubuntupodcast_[0-9]*.*mp3$"; then
+      FILENAME="Ubuntu Podcast $(echo ${FIRSTFILENAME} | sed -e 's/ubuntupodcast_\(s[0-9]*\)\(e[0-9]*\)\(.mp3$\)/\1\2\3/' )";
+      return
+  fi
 
-  # GeekRant 2016-02-24_geekrant_228__a_fairly_fluffy_show.mp3
+  # Late Night Linux: LNL02.ogg
+  if echo $FIXURL | grep -q "LNL[0-9]*.*ogg$"; then
+      FILENAME="Late Night Linux S01E$(echo ${FIRSTFILENAME} | sed -e 's/LNL\([0-9]*\)\(.ogg$\)/\1\2/' )";
+      return
+  fi
 
-  # TLLTS tllts_648-03-02-16.mp3
+  # LinuxLuddites: LinuxLuddites094.ogg
+  if echo $FIXURL | grep -q "LinuxLuddites[0-9]*.*ogg$"; then
+      FILENAME="Linux Luddites S01E$(echo ${FIRSTFILENAME} | sed -e 's/LinuxLuddites\([0-9]*\)\(.ogg$\)/\1\2/' )";
+      return
+  fi
 
-  # HanselMinutes hanselminutes_0517.mp3
-
-  # ProgrammingThrowdown ProgrammingThrowdown_50.mp3
-
-  # LinuxLuddites LinuxLuddites072.mp3
-
-  # HerdingCode HerdingCode-0215-Jon-McCoy.mp3
-
+  #Linux Kernel Podcast S01E
 }
 
 check_directory () {
