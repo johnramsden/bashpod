@@ -225,7 +225,7 @@ sanity_checks () {
     rm -f $TEMPRSSFILE
     touch $TEMPRSSFILE
 
-    # Make sure the mp.conf file or the file passed with -c switch exists
+    # Make sure the pod.conf file or the file passed with -c switch exists
     if [ ! -e "$RSSFILE" ]; then
         crunch "The file $RSSFILE cannot be found.  Run $0 -h \
             for usage and check the settings at the top of mashpodder.sh.\
@@ -233,7 +233,7 @@ sanity_checks () {
         exit 0
     fi
 
-    # Check the mp.conf and do some basic error checking
+    # Check the pod.conf and do some basic error checking
     while read LINE; do
         DLNUM="none"
         FEED=$(echo $LINE | cut -f1 -d ' ')
@@ -502,7 +502,7 @@ fetch_podcasts () {
     # This is the main loop
     local LINE FEED DATADIR DLNUM COUNTER FILE URL FILENAME DLURL
 
-    # Read the mp.conf file and wget any url not already in the
+    # Read the pod.conf file and wget any url not already in the
     # podcast.log file:
     NEWDL=0
     while read LINE; do
@@ -575,12 +575,13 @@ fetch_podcasts () {
                     $WGET $WGET_QUIET -c -T $WGET_TIMEOUT -O "$FILENAME" \
                         "$DLURL"
                     ((NEWDL=NEWDL+1))
-                    mv "$FILENAME" $PODCASTDIR/$DATADIR/"$FILENAME"
                     if [ "$POD_SET_PERM" = "1" ]; then
                         if verbose; then
                             echo "Setting permissions to $PODCAST_PERM on download"
                         fi
-                        chmod -R $PODCAST_PERM $PODCASTDIR/$DATADIR
+                        install -m $PODCAST_PERM "$FILENAME" "$PODCASTDIR/$DATADIR/$FILENAME"
+                    else
+                        mv "$FILENAME" $PODCASTDIR/$DATADIR/"$FILENAME"
                     fi
                     cd $BASEDIR
                     if [[ -n "$M3U" && -n "$DAILY_PLAYLIST" ]]; then
@@ -682,21 +683,21 @@ Options are:
 
 -b              Create a date-stamped backup of the podcast.log file.
 
--c <filename>   Use a different config file other than mp.conf.
+-c <filename>   Use a different config file other than pod.conf.
 
 -d <date>       Valid date string for date-based archiving.  See man date.
 
--f              Override mp.conf and download the first new episode.
+-f              Override pod.conf and download the first new episode.
 
 -h              Display this help message.
 
 -m              Create m3u playlists.
 
--u              Override mp.conf and only update (mark downloaded).
+-u              Override pod.conf and only update (mark downloaded).
 
 -v              Display verbose messages.
 
-mp.conf is the standard configuration file.  Please see the sample mp.conf for
+pod.conf is the standard configuration file.  Please see the sample pod.conf for
 how this file is to be configured.
 
 Some -- but not all -- of the default settings can be set permanently at the
@@ -704,7 +705,7 @@ top of the script in the 'USER CONFIGURATION' section or temporarily by passing
 a command line switch.  The 'USER CONFIGURATION' section also has additional
 things you can set that do not have compatible command-line switches.
 
-Therefore, reading mashpodder.sh is recommended.
+Therefore, reading bashpod.sh is recommended.
 
 EOF
                     exit 0
