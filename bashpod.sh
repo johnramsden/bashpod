@@ -493,7 +493,14 @@ check_directory () {
     if [ ! -e $PODCASTDIR/$DATADIR ]; then
         crunch "The directory $PODCASTDIR/$DATADIR for $FEED does not \
             exist.  Creating now..."
-        mkdir -p $PODCASTDIR/$DATADIR
+        if [ "$POD_SET_PERM" = "1" ]; then
+            if verbose; then
+                 echo "Setting permissions on directory to $PODCAST_PERM"
+            fi
+            install -m $PODCAST_PERM -d "$PODCASTDIR/$DATADIR"
+        else
+            mkdir -p $PODCASTDIR/$DATADIR
+        fi
     fi
     return 0
 }
